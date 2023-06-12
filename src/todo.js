@@ -2,7 +2,7 @@
 
 function Root() {
   const [contents, setContents] = React.useState(() => {
-    let data = {};
+    let obj = {};
     const ids = Object.keys(localStorage)
       .filter((id) => id !== "id")
       .map((id) => {
@@ -11,9 +11,9 @@ function Root() {
       .sort((a, b) => a - b);
 
     ids.map((id) => {
-      data[id] = localStorage.getItem(id);
+      obj[id] = localStorage.getItem(id);
     });
-    return data;
+    return obj;
   });
 
   return (
