@@ -1,5 +1,5 @@
 "use strict";
-//localStorage.clear();
+
 function Root() {
   const [contents, setContents] = React.useState(() => {
     let data = {};
