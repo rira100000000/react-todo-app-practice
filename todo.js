@@ -8,67 +8,55 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function Root() {
-  var _React$useState = React.useState(Object.keys(localStorage).filter(function (id) {
-    return id !== "id";
-  }).map(function (id) {
-    return parseInt(id);
-  }).sort(function (a, b) {
-    return a - b;
-  })),
-      _React$useState2 = _slicedToArray(_React$useState, 2),
-      ids = _React$useState2[0],
-      setIds = _React$useState2[1];
-
-  var _React$useState3 = React.useState(function () {
+  var _React$useState = React.useState(function () {
     var data = {};
+    var ids = Object.keys(localStorage).filter(function (id) {
+      return id !== "id";
+    }).map(function (id) {
+      return parseInt(id);
+    }).sort(function (a, b) {
+      return a - b;
+    });
+
     ids.map(function (id) {
       data[id] = localStorage.getItem(id);
     });
     return data;
   }),
-      _React$useState4 = _slicedToArray(_React$useState3, 2),
-      contents = _React$useState4[0],
-      setContents = _React$useState4[1];
+      _React$useState2 = _slicedToArray(_React$useState, 2),
+      contents = _React$useState2[0],
+      setContents = _React$useState2[1];
 
   return React.createElement(
     "div",
     null,
-    React.createElement(InputForm, {
-      ids: ids,
-      setIds: setIds,
-      contents: contents,
-      setContents: setContents
-    }),
-    React.createElement(Todo, {
-      ids: ids,
-      setIds: setIds,
-      contents: contents,
-      setContents: setContents
-    })
+    React.createElement(InputForm, { contents: contents, setContents: setContents }),
+    React.createElement(Todo, { contents: contents, setContents: setContents })
   );
 }
 
 var InputForm = function InputForm(props) {
+  var ids = Object.keys(props.contents);
   var calcCurrentId = function calcCurrentId() {
-    if (props.ids.length === 0) {
+    if (ids.length === 0) {
       return 0;
     } else {
-      var parsedIds = props.ids.map(function (id) {
+      var parsedIds = ids.map(function (id) {
         return parseInt(id);
       });
       return Math.max.apply(Math, _toConsumableArray(parsedIds)) + 1;
     }
   };
 
-  var _React$useState5 = React.useState(calcCurrentId()),
-      _React$useState6 = _slicedToArray(_React$useState5, 2),
-      currentId = _React$useState6[0],
-      setCurrentId = _React$useState6[1];
+  var _React$useState3 = React.useState(calcCurrentId()),
+      _React$useState4 = _slicedToArray(_React$useState3, 2),
+      currentId = _React$useState4[0],
+      setCurrentId = _React$useState4[1];
 
-  var _React$useState7 = React.useState(""),
-      _React$useState8 = _slicedToArray(_React$useState7, 2),
-      content = _React$useState8[0],
-      setContent = _React$useState8[1];
+  var _React$useState5 = React.useState(""),
+      _React$useState6 = _slicedToArray(_React$useState5, 2),
+      content = _React$useState6[0],
+      setContent = _React$useState6[1];
 
   var handleChange = function handleChange(event) {
     setContent(event.target.value);
@@ -79,9 +67,6 @@ var InputForm = function InputForm(props) {
 
     if (localStorage.hasOwnProperty("id")) {
       setCurrentId(currentId + 1);
-      var updatedIds = [].concat(_toConsumableArray(props.ids), [currentId]);
-      props.setIds(updatedIds);
-
       localStorage.setItem("id", currentId);
     } else {
       localStorage.setItem("id", 0);
@@ -109,6 +94,16 @@ var InputForm = function InputForm(props) {
 };
 
 var Todo = function Todo(props) {
+  var visible = {};
+  Object.keys(props.contents).map(function (id) {
+    visible[id] = false;
+  });
+
+  var _React$useState7 = React.useState(visible),
+      _React$useState8 = _slicedToArray(_React$useState7, 2),
+      isVisible = _React$useState8[0],
+      setIsVisible = _React$useState8[1];
+
   return React.createElement(
     "div",
     null,
@@ -121,57 +116,39 @@ var Todo = function Todo(props) {
           null,
           props.contents[id]
         ),
-        React.createElement(DeleteButton, {
-          id: id,
-          setIds: props.setIds,
-          contents: props.contents,
-          setContents: props.setContents
-        }),
-        React.createElement(ToggleEdit, {
-          id: id,
-          setIds: props.setIds,
-          contents: props.contents,
-          setContents: props.setContents
-        })
+        React.createElement(
+          "div",
+          { "class": "buttons" },
+          React.createElement(ToggleEdit, {
+            id: id,
+            isVisible: isVisible,
+            setIsVisible: setIsVisible
+          }),
+          React.createElement(DeleteButton, {
+            id: id,
+            contents: props.contents,
+            setContents: props.setContents
+          }),
+          isVisible[id] && React.createElement(
+            "div",
+            null,
+            React.createElement(EditForm, {
+              id: id,
+              contents: props.contents,
+              setContents: props.setContents
+            })
+          )
+        )
       );
     })
   );
 };
 
-var DeleteButton = function DeleteButton(props) {
-  return React.createElement(
-    "button",
-    {
-      className: "delete",
-      id: "delete" + props.id,
-      onClick: function onClick() {
-        localStorage.removeItem(props.id);
-        var updatedIds = Object.keys(localStorage).filter(function (id) {
-          return id !== "id" || id === props.id;
-        }).map(function (id) {
-          return parseInt(id);
-        }).sort(function (a, b) {
-          return a - b;
-        });
-        props.setIds(updatedIds);
-
-        var updatedContents = props.contents;
-        delete updatedContents[props.id];
-        props.setContents(updatedContents);
-      }
-    },
-    "delete"
-  );
-};
-
 var ToggleEdit = function ToggleEdit(props) {
-  var _React$useState9 = React.useState(false),
-      _React$useState10 = _slicedToArray(_React$useState9, 2),
-      isVisible = _React$useState10[0],
-      setIsVisible = _React$useState10[1];
-
   var toggleVisibility = function toggleVisibility() {
-    setIsVisible(!isVisible);
+    var obj = Object.assign({}, props.isVisible);
+    obj[props.id] = !obj[props.id];
+    props.setIsVisible(obj);
   };
 
   return React.createElement(
@@ -181,24 +158,15 @@ var ToggleEdit = function ToggleEdit(props) {
       "button",
       { onClick: toggleVisibility },
       "Edit"
-    ),
-    isVisible && React.createElement(
-      "div",
-      null,
-      React.createElement(EditForm, {
-        id: props.id,
-        setIds: props.setIds,
-        contents: props.contents,
-        setContents: props.setContents
-      })
     )
   );
 };
+
 var EditForm = function EditForm(props) {
-  var _React$useState11 = React.useState(""),
-      _React$useState12 = _slicedToArray(_React$useState11, 2),
-      content = _React$useState12[0],
-      setContent = _React$useState12[1];
+  var _React$useState9 = React.useState(""),
+      _React$useState10 = _slicedToArray(_React$useState9, 2),
+      content = _React$useState10[0],
+      setContent = _React$useState10[1];
 
   var handleChange = function handleChange(event) {
     setContent(event.target.value);
@@ -226,6 +194,29 @@ var EditForm = function EditForm(props) {
         React.createElement("input", { type: "text", value: content, onChange: handleChange })
       ),
       React.createElement("input", { type: "submit", value: "Submit" })
+    )
+  );
+};
+
+var DeleteButton = function DeleteButton(props) {
+  return React.createElement(
+    "div",
+    null,
+    React.createElement(
+      "button",
+      {
+        className: "delete",
+        id: "delete" + props.id,
+        onClick: function onClick() {
+          localStorage.removeItem(props.id);
+
+          var updatedContents = Object.assign({}, props.contents);
+          delete updatedContents[props.id];
+
+          props.setContents(updatedContents);
+        }
+      },
+      "delete"
     )
   );
 };
