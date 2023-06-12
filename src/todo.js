@@ -93,13 +93,11 @@ const Todo = (props) => {
                 setContents={props.setContents}
               />
               {isVisible[id] && (
-                <div>
-                  <EditForm
-                    id={id}
-                    contents={props.contents}
-                    setContents={props.setContents}
-                  />
-                </div>
+                <EditForm
+                  id={id}
+                  contents={props.contents}
+                  setContents={props.setContents}
+                />
               )}
             </div>
           </div>
