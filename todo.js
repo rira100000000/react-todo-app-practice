@@ -57,9 +57,14 @@ const InputForm = (props) => {
       <form onSubmit={handleSubmit}>
         <label>
           TODO:
-          <input type="text" value={content} onChange={handleChange} />
+          <input
+            key={"edit_form_" + props.id}
+            type="text"
+            value={content}
+            onChange={handleChange}
+          />
         </label>
-        <input type="submit" value="Submit" />
+        <input key={"submit_" + props.id} type="submit" value="Submit" />
       </form>
     </div>
   );
@@ -76,7 +81,7 @@ const Todo = (props) => {
     <div>
       {Object.keys(props.contents).map((id) => {
         return (
-          <div id={id}>
+          <div key={id}>
             <p>{props.contents[id]}</p>
             <div className="buttons">
               <ToggleEdit
