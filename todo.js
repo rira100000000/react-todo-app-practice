@@ -25,8 +25,8 @@ function Root() {
 }
 
 const InputForm = (props) => {
-  const ids = Object.keys(props.contents);
   const calcCurrentId = () => {
+    const ids = Object.keys(props.contents);
     if (ids.length === 0) {
       return 0;
     } else {
@@ -44,12 +44,9 @@ const InputForm = (props) => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (localStorage.hasOwnProperty("id")) {
-      setCurrentId(currentId + 1);
-      localStorage.setItem("id", currentId);
-    } else {
-      localStorage.setItem("id", 0);
-    }
+    setCurrentId(currentId + 1);
+    localStorage.setItem("id", currentId);
+
     localStorage.setItem(currentId, content);
     props.setContents({ ...props.contents, [currentId]: content });
     setContent("");
